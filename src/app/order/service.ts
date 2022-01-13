@@ -6,15 +6,12 @@ import { OrderMapper } from "./mappers/orderMapper";
 import { IOrder, Order } from "./models/entities/order.model";
 import { IService } from "./models/interfaces/classes/IService";
 import { OrderService } from "./services/orderService";
-import { ApiCookieAuth, ApiTags } from "@nestjs/swagger";
 import { CustomerService } from "../customer/services/customerService";
 import { Customer, ICustomer } from "../customer/models/entities/customer.model";
 import { stores } from "../../../data/stores";
 import { IProduct } from "../../../data/IStore";
 import { ICreateOrUpdateOrder } from "./models/interfaces/requests/ICreateOrUpdateOrder";
 const tag = "ecommerce-be:order:service";
-@ApiCookieAuth("token")
-@ApiTags("")
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;
@@ -50,15 +47,14 @@ export class Service implements IService {
     @Post("/api/order/create")
     public async createOrder(@Body() body: ICreateOrUpdateOrder, @Res() res: any, @Next() next: any): Promise<any> {
         try {
-            let errorMessage: string;
             const itemsWithoutAmount: IProduct[] = [];
             const orderData = await this.orderMapper.getOrderMapper(body);
             const orderStore = stores.find((store) => store.name === orderData.store);
-            if (!orderStore) errorMessage = "This store isn't found";
+            if (!orderStore) throw new InternalServerErrorException("This store isn't found");
             for (const item of body.items) {
                 if (!orderStore.products.includes(item)) itemsWithoutAmount.push({ name: item.name, unit: item.unit, price: item.price });
             }
-            if (itemsWithoutAmount.length !== body.items.length) errorMessage = "These products aren't found in the selected store";
+            if (itemsWithoutAmount.length !== body.items.length) throw new InternalServerErrorException("These products aren't found in the selected store");
             const customerData = body.customer;
             const customer = await this.customerService.getCustomer(customerData.email);
             customerData.address = [];
@@ -70,6 +66,7 @@ export class Service implements IService {
                 if (!customer.address.includes(orderData.address.trim())) customerData.address.push(orderData.address);
                 await this.customerService.updateCustomer(customerData);
             }
+            orderData.customerEmail = customerData.email;
             const order = await this.orderService.createOrder(orderData);
             return res.status(201).json({ message: "Order is created successfuly", status: HttpStatus.CREATED, order });
         } catch (error) {

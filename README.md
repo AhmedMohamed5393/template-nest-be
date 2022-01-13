@@ -1,4 +1,4 @@
-# ecommerce-be
+# ecardshop-be
 Backend System with Node.js and Nest.js for E-Commerce service
 
 # note

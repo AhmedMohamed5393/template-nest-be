@@ -7,12 +7,9 @@ import { CustomerMapper } from "./mappers/customerMapper";
 import { Customer, ICustomer } from "./models/entities/customer.model";
 import { IService } from "./models/interfaces/classes/IService";
 import { CustomerService } from "./services/customerService";
-import { ApiCookieAuth, ApiTags } from "@nestjs/swagger";
 import { admin } from "../../../data/admin";
 import { ILoginRequest } from "./models/interfaces/requests/ILoginRequest";
 const tag = "ecommerce-be:customer:service";
-@ApiCookieAuth("token")
-@ApiTags("")
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;
@@ -47,7 +44,8 @@ export class Service implements IService {
     public async login(@Body() body: ILoginRequest, @Res() res: any, @Next() next: any): Promise<any> {
         try {
             if (body.password !== admin.password || body.username !== admin.username) throw new UnauthorizedException("Credentials or username are incorrect");
-            return res.status(200).json({ token: this.encodeToken(admin) });
+            const token = this.encodeToken(admin);
+            return res.status(200).json({ token });
         } catch (error) {
             const loginErrorMessage = { tag: tag + ":login", message: "There is an error while signing in user", error, status: 500 };
             logger(loginErrorMessage);
