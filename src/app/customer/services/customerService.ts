@@ -33,7 +33,7 @@ export class CustomerService implements ICustomerService {
             logger(createCustomerErrorMessage);
         }
     }
-    public async updateCustomer(customerData: ICreateOrUpdateCustomer): Promise<ICustomer> {
+    public async updateCustomer(customerData: ICreateOrUpdateCustomer | ICustomer): Promise<ICustomer> {
         try {
             return await this.customerRepository.updateCustomer(customerData);
         } catch (error) {

@@ -11,6 +11,8 @@ import { Customer, ICustomer } from "../customer/models/entities/customer.model"
 import { stores } from "../../../data/stores";
 import { IProduct } from "../../../data/IStore";
 import { ICreateOrUpdateOrder } from "./models/interfaces/requests/ICreateOrUpdateOrder";
+import { ApiCookieAuth, ApiUnauthorizedResponse, ApiOkResponse, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiBody, ApiParam } from "@nestjs/swagger";
+import { customerId, orderExample, orderId } from "src/documentation";
 const tag = "ecommerce-be:order:service";
 @Controller("")
 export class Service implements IService {
@@ -22,6 +24,10 @@ export class Service implements IService {
         this.orderService = new OrderService(this.orderModel);
         this.orderMapper = new OrderMapper();
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiOkResponse({ description: 'Get all orders' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get all orders" })
     @Get("/api/orders")
     public async getOrders(@Req() req: any, @Res() res: any, @Next() next: any): Promise<IOrder[]> {
         try {
@@ -33,6 +39,11 @@ export class Service implements IService {
             return res.status(500).json({ message: "Can't get orders" });
         }
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiParam({ type: "string", name: "id", example: orderId })
+    @ApiOkResponse({ description: 'Get order successfully' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get order by id" })
     @Get("/api/order/:id")
     public async getOrderById(@Param() params: any, @Res() res: any, @Next() next: any): Promise<IOrder> {
         try {
@@ -44,6 +55,11 @@ export class Service implements IService {
             return res.status(500).json({ message: "Can't get order" });
         }
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiBody({ schema: { example: orderExample } })
+    @ApiCreatedResponse({ description: 'Order is created successfully' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Order can't be created" })
     @Post("/api/order/create")
     public async createOrder(@Body() body: ICreateOrUpdateOrder, @Res() res: any, @Next() next: any): Promise<any> {
         try {
@@ -61,10 +77,9 @@ export class Service implements IService {
             if (!customer) {
                 customerData.address.push(orderData.address);
                 await this.customerService.createCustomer(customerData);
-            }
-            else {
-                if (!customer.address.includes(orderData.address.trim())) customerData.address.push(orderData.address);
-                await this.customerService.updateCustomer(customerData);
+            } else {
+                if (!customer.address.includes(orderData.address.trim())) customer.address.push(orderData.address);
+                await this.customerService.updateCustomer(customer);
             }
             orderData.customerEmail = customerData.email;
             const order = await this.orderService.createOrder(orderData);
