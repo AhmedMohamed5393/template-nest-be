@@ -1,5 +1,6 @@
 import { logger } from "../../shared/logger";
-import { ICreateOrUpdateCustomer } from "../models/interfaces/requests/ICreateOrUpdateCustomer";
+import { ICustomer } from "../models/entities/customer.model";
+import { ICreateOrUpdateCustomer, ICustomersResponse } from "../models/interfaces/requests/ICreateOrUpdateCustomer";
 const tag = "management:customer:customerMapper";
 export class CustomerMapper {
     public prepareTokenPayload(user: any): any {
@@ -11,17 +12,40 @@ export class CustomerMapper {
             logger(prepareTokenPayloadErrorMessage);
         }
     }
-    public getCustomerMapper(customerData: ICreateOrUpdateCustomer, hashedPassword: string): ICreateOrUpdateCustomer {
+    public getCustomerMapper(customerData: ICreateOrUpdateCustomer): ICreateOrUpdateCustomer {
         try {
             let customer = {} as ICreateOrUpdateCustomer;
+            customer._id = customerData._id;
             customer.name = customerData.name;
             customer.email = customerData.email;
-            customer.password = hashedPassword;
             customer.phone = customerData.phone;
+            customer.address = customerData.address;
             return customer;
         } catch (error) {
-            const prepareTokenPayloadErrorMessage = { tag: tag + ":prepareTokenPayload", message: "There is an error while preparing customer token", error };
-            logger(prepareTokenPayloadErrorMessage);
+            const getCustomerMapperErrorMessage = { tag: tag + ":getCustomerMapper", message: "There is an error while preparing customer data", error };
+            logger(getCustomerMapperErrorMessage);
+        }
+    }
+    public async mapICustomersToICustomersResponse(customers: ICustomer[]): Promise<ICustomersResponse[]> {
+        try {
+            let mappedCustomer = {} as ICustomersResponse;
+            const mappedCustomers = [] as ICustomersResponse[];
+            for (const customer of customers) {
+                mappedCustomer._id = customer._id;
+                mappedCustomer.name = customer.name;
+                mappedCustomer.email = customer.email;
+                mappedCustomer.phone = customer.phone;
+                mappedCustomer.address = customer.address;
+                mappedCustomers.push(mappedCustomer);
+            }
+            return mappedCustomers;
+        } catch (error) {
+            const mapICustomersToICustomersResponseMapperErrorMessage = {
+                tag: tag + ":mapICustomersToICustomersResponseMapper",
+                message: "There is an error while mapping customers data",
+                error,
+            };
+            logger(mapICustomersToICustomersResponseMapperErrorMessage);
         }
     }
 }
