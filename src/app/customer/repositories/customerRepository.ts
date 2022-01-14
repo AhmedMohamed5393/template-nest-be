@@ -1,5 +1,5 @@
 import { logger } from "../../shared/logger";
-import { isValidObjectId, Model } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import { ICustomerRepository } from "../models/interfaces/classes/ICustomerRepository";
 import { ICustomer } from "../models/entities/customer.model";
 import { ICreateOrUpdateCustomer } from "../models/interfaces/requests/ICreateOrUpdateCustomer";

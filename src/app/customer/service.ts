@@ -7,12 +7,12 @@ import { CustomerMapper } from "./mappers/customerMapper";
 import { Customer, ICustomer } from "./models/entities/customer.model";
 import { IService } from "./models/interfaces/classes/IService";
 import { CustomerService } from "./services/customerService";
-import { ApiCookieAuth, ApiTags } from "@nestjs/swagger";
 import { admin } from "../../../data/admin";
 import { ILoginRequest } from "./models/interfaces/requests/ILoginRequest";
+import { ApiBody, ApiCookieAuth, ApiInternalServerErrorResponse, ApiOkResponse, ApiParam, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { customerId, loginRequest } from "src/documentation";
+import { ICustomersResponse } from "./models/interfaces/requests/ICreateOrUpdateCustomer";
 const tag = "ecommerce-be:customer:service";
-@ApiCookieAuth("token")
-@ApiTags("")
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;
@@ -21,33 +21,47 @@ export class Service implements IService {
         this.customerService = new CustomerService(this.customerModel);
         this.customerMapper = new CustomerMapper();
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiOkResponse({ description: 'Get all customers' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get all customers" })
     @Get("/api/customers")
-    public async getCustomers(@Req() req: any, @Res() res: any, @Next() next: any): Promise<ICustomer[]> {
+    public async getCustomers(@Req() req: any, @Res() res: any, @Next() next: any): Promise<ICustomersResponse[]> {
         try {
             const customers = await this.customerService.getCustomers();
-            return res.status(200).json(customers);
+            const mappedCustomers = await this.customerMapper.mapICustomersToICustomersResponse(customers);
+            return res.status(200).json(mappedCustomers);
         } catch (error) {
-            const getCustomerByIdErrorMessage = { tag: tag + ":getCustomerById", message: "There is an error while signing in user", error, status: 500 };
-            logger(getCustomerByIdErrorMessage);
-            return res.status(500).json({ message: "Customer can't sign in" });
+            const getCustomersErrorMessage = { tag: tag + ":getCustomers", message: "There is an error while getting all customers", error, status: 500 };
+            logger(getCustomersErrorMessage);
+            return res.status(500).json({ message: "Can't get all customers" });
         }
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiParam({ type: "string", name: "id", example: customerId })
+    @ApiOkResponse({ description: 'Get a specific customer' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get customer by id" })
     @Get("/api/customer/:id")
     public async getCustomerById(@Param() params: any, @Res() res: any, @Next() next: any): Promise<ICustomer> {
         try {
             const customer = await this.customerService.getCustomer(params.id);
             return res.status(200).json(customer);
         } catch (error) {
-            const getCustomerByIdErrorMessage = { tag: tag + ":getCustomerById", message: "There is an error while signing in user", error, status: 500 };
+            const getCustomerByIdErrorMessage = { tag: tag + ":getCustomerById", message: "There is an error while getting customer by id", error, status: 500 };
             logger(getCustomerByIdErrorMessage);
-            return res.status(500).json({ message: "Customer can't sign in" });
+            return res.status(500).json({ message: "Can't get customer by id" });
         }
     }
+    @ApiBody({ schema: { example: loginRequest } })
+    @ApiOkResponse({ description: 'User is logged in successfully' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "User can't sign in" })
     @Post("/api/login")
     public async login(@Body() body: ILoginRequest, @Res() res: any, @Next() next: any): Promise<any> {
         try {
             if (body.password !== admin.password || body.username !== admin.username) throw new UnauthorizedException("Credentials or username are incorrect");
-            return res.status(200).json({ token: this.encodeToken(admin) });
+            const token = this.encodeToken(admin);
+            return res.status(200).json({ token });
         } catch (error) {
             const loginErrorMessage = { tag: tag + ":login", message: "There is an error while signing in user", error, status: 500 };
             logger(loginErrorMessage);

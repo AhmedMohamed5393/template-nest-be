@@ -6,15 +6,15 @@ import { OrderMapper } from "./mappers/orderMapper";
 import { IOrder, Order } from "./models/entities/order.model";
 import { IService } from "./models/interfaces/classes/IService";
 import { OrderService } from "./services/orderService";
-import { ApiCookieAuth, ApiTags } from "@nestjs/swagger";
 import { CustomerService } from "../customer/services/customerService";
 import { Customer, ICustomer } from "../customer/models/entities/customer.model";
 import { stores } from "../../../data/stores";
 import { IProduct } from "../../../data/IStore";
 import { ICreateOrUpdateOrder } from "./models/interfaces/requests/ICreateOrUpdateOrder";
+import { ApiCookieAuth, ApiUnauthorizedResponse, ApiOkResponse, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiBody, ApiParam } from "@nestjs/swagger";
+import { orderExample, orderId } from "../../documentation";
+import { IOrdersResponse } from "./models/interfaces/responses/IOrdersResponse";
 const tag = "ecommerce-be:order:service";
-@ApiCookieAuth("token")
-@ApiTags("")
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;
@@ -25,17 +25,27 @@ export class Service implements IService {
         this.orderService = new OrderService(this.orderModel);
         this.orderMapper = new OrderMapper();
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiOkResponse({ description: 'Get all orders' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get all orders" })
     @Get("/api/orders")
-    public async getOrders(@Req() req: any, @Res() res: any, @Next() next: any): Promise<IOrder[]> {
+    public async getOrders(@Req() req: any, @Res() res: any, @Next() next: any): Promise<IOrdersResponse[]> {
         try {
             const orders = await this.orderService.getOrders();
-            return res.status(200).json(orders);
+            const mappedOrders = await this.orderMapper.mapOrdersResponse(orders);
+            return res.status(200).json(mappedOrders);
         } catch (error) {
             const getOrdersErrorMessage = { tag: tag + ":getOrders", message: "There is an error while getting all orders", error, status: 500 };
             logger(getOrdersErrorMessage);
             return res.status(500).json({ message: "Can't get orders" });
         }
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiParam({ type: "string", name: "id", example: orderId })
+    @ApiOkResponse({ description: 'Get order successfully' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Can't get order by id" })
     @Get("/api/order/:id")
     public async getOrderById(@Param() params: any, @Res() res: any, @Next() next: any): Promise<IOrder> {
         try {
@@ -47,29 +57,33 @@ export class Service implements IService {
             return res.status(500).json({ message: "Can't get order" });
         }
     }
+    @ApiCookieAuth('token')
+    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
+    @ApiBody({ schema: { example: orderExample } })
+    @ApiCreatedResponse({ description: 'Order is created successfully' })
+    @ApiInternalServerErrorResponse({ status: 500, description: "Order can't be created" })
     @Post("/api/order/create")
     public async createOrder(@Body() body: ICreateOrUpdateOrder, @Res() res: any, @Next() next: any): Promise<any> {
         try {
-            let errorMessage: string;
             const itemsWithoutAmount: IProduct[] = [];
             const orderData = await this.orderMapper.getOrderMapper(body);
             const orderStore = stores.find((store) => store.name === orderData.store);
-            if (!orderStore) errorMessage = "This store isn't found";
+            if (!orderStore) throw new InternalServerErrorException("This store isn't found");
             for (const item of body.items) {
                 if (!orderStore.products.includes(item)) itemsWithoutAmount.push({ name: item.name, unit: item.unit, price: item.price });
             }
-            if (itemsWithoutAmount.length !== body.items.length) errorMessage = "These products aren't found in the selected store";
+            if (itemsWithoutAmount.length !== body.items.length) throw new InternalServerErrorException("These products aren't found in the selected store");
             const customerData = body.customer;
             const customer = await this.customerService.getCustomer(customerData.email);
             customerData.address = [];
             if (!customer) {
                 customerData.address.push(orderData.address);
                 await this.customerService.createCustomer(customerData);
+            } else {
+                if (!customer.address.includes(orderData.address.trim())) customer.address.push(orderData.address);
+                await this.customerService.updateCustomer(customer);
             }
-            else {
-                if (!customer.address.includes(orderData.address.trim())) customerData.address.push(orderData.address);
-                await this.customerService.updateCustomer(customerData);
-            }
+            orderData.customerEmail = customerData.email;
             const order = await this.orderService.createOrder(orderData);
             return res.status(201).json({ message: "Order is created successfuly", status: HttpStatus.CREATED, order });
         } catch (error) {
