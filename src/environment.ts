@@ -14,6 +14,6 @@ switch (process.env.NODE_ENV) {
     path = `${basedir}/../../.env.development`;
 }
 dotenv.config({ path });
-export const BACKEND_PORT = process.env.BACKEND_PORT;
+export const PORT = process.env.PORT;
 export const FRONTEND_HOST = process.env.FRONTEND_HOST;
 export const DBURI = process.env.DBURI;

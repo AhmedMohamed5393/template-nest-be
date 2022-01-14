@@ -6,7 +6,7 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { config } from "./documentation";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = env.BACKEND_PORT;
+  const port = env.PORT;
   app.use(cookieParser());
   app.enableCors({
     origin: env.FRONTEND_HOST,
