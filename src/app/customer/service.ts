@@ -11,6 +11,7 @@ import { admin } from "../../../data/admin";
 import { ILoginRequest } from "./models/interfaces/requests/ILoginRequest";
 import { ApiBody, ApiCookieAuth, ApiInternalServerErrorResponse, ApiOkResponse, ApiParam, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { customerId, loginRequest } from "src/documentation";
+import { ICustomersResponse } from "./models/interfaces/requests/ICreateOrUpdateCustomer";
 const tag = "ecommerce-be:customer:service";
 @Controller("")
 export class Service implements IService {
@@ -25,10 +26,11 @@ export class Service implements IService {
     @ApiOkResponse({ description: 'Get all customers' })
     @ApiInternalServerErrorResponse({ status: 500, description: "Can't get all customers" })
     @Get("/api/customers")
-    public async getCustomers(@Req() req: any, @Res() res: any, @Next() next: any): Promise<ICustomer[]> {
+    public async getCustomers(@Req() req: any, @Res() res: any, @Next() next: any): Promise<ICustomersResponse[]> {
         try {
             const customers = await this.customerService.getCustomers();
-            return res.status(200).json(customers);
+            const mappedCustomers = await this.customerMapper.mapICustomersToICustomersResponse(customers);
+            return res.status(200).json(mappedCustomers);
         } catch (error) {
             const getCustomersErrorMessage = { tag: tag + ":getCustomers", message: "There is an error while getting all customers", error, status: 500 };
             logger(getCustomersErrorMessage);

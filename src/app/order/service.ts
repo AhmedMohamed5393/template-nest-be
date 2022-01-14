@@ -12,7 +12,8 @@ import { stores } from "../../../data/stores";
 import { IProduct } from "../../../data/IStore";
 import { ICreateOrUpdateOrder } from "./models/interfaces/requests/ICreateOrUpdateOrder";
 import { ApiCookieAuth, ApiUnauthorizedResponse, ApiOkResponse, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiBody, ApiParam } from "@nestjs/swagger";
-import { customerId, orderExample, orderId } from "src/documentation";
+import { orderExample, orderId } from "../../documentation";
+import { IOrdersResponse } from "./models/interfaces/responses/IOrdersResponse";
 const tag = "ecommerce-be:order:service";
 @Controller("")
 export class Service implements IService {
@@ -29,10 +30,11 @@ export class Service implements IService {
     @ApiOkResponse({ description: 'Get all orders' })
     @ApiInternalServerErrorResponse({ status: 500, description: "Can't get all orders" })
     @Get("/api/orders")
-    public async getOrders(@Req() req: any, @Res() res: any, @Next() next: any): Promise<IOrder[]> {
+    public async getOrders(@Req() req: any, @Res() res: any, @Next() next: any): Promise<IOrdersResponse[]> {
         try {
             const orders = await this.orderService.getOrders();
-            return res.status(200).json(orders);
+            const mappedOrders = await this.orderMapper.mapOrdersResponse(orders);
+            return res.status(200).json(mappedOrders);
         } catch (error) {
             const getOrdersErrorMessage = { tag: tag + ":getOrders", message: "There is an error while getting all orders", error, status: 500 };
             logger(getOrdersErrorMessage);

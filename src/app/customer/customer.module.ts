@@ -6,7 +6,6 @@ import { Customer, CustomerSchema } from './models/entities/customer.model';
 import { AuthorizeMiddleware } from '../shared/middlewares/authorizeMiddleware';
 import { GetOrDeleteCustomerMiddleware } from './utils/middlewares/getOrDeleteCustomerMiddleware';
 import { LoginMiddleware } from './utils/middlewares/loginMiddleware';
-import { CreateCustomerMiddleware } from './utils/middlewares/createCustomerMiddleware';
 @Module({
     imports: [
         JwtModule.register({ secret: 'super-secret' }),
