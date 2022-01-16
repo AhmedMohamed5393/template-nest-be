@@ -1,7 +1,7 @@
 import { logger } from "../../shared/logger";
 import { IOrderRepository } from "../models/interfaces/classes/IOrderRepository";
 import { IOrder } from "../models/entities/order.model";
-const tag = "ecommerce-be:order:orderRepository";
+const tag = "ecardshop-be:order:orderRepository";
 export class OrderRepository implements IOrderRepository {
     constructor(private orderModel) {}
     public async getOrders(): Promise<IOrder[]> {

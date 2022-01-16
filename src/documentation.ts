@@ -1,6 +1,6 @@
 import { DocumentBuilder } from "@nestjs/swagger";
 export const config = new DocumentBuilder()
-                        .setTitle("ECommerce API")
+                        .setTitle("E-Card Shop API")
                         .setDescription("Backend System for E-Commerce service")
                         .setVersion("0.0.1")
                         .addCookieAuth('optional-session-id')

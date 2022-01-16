@@ -15,7 +15,7 @@ import { LoginMiddleware } from './utils/middlewares/loginMiddleware';
 })
 export class CustomerModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoginMiddleware).forRoutes({ path: "/api/customer/login", method: RequestMethod.POST });
+        consumer.apply(LoginMiddleware).forRoutes({ path: "/api/login", method: RequestMethod.POST });
         consumer.apply(AuthorizeMiddleware).forRoutes({ path: "/api/customers", method: RequestMethod.GET });
         consumer.apply(AuthorizeMiddleware, GetOrDeleteCustomerMiddleware).forRoutes({ path: "/api/customer/:id", method: RequestMethod.GET });
     }
