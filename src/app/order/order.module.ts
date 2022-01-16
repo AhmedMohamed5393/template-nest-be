@@ -18,7 +18,7 @@ import { Customer, CustomerSchema } from '../customer/models/entities/customer.m
 export class OrderModule {
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(AuthorizeMiddleware).forRoutes({ path: "/api/orders", method: RequestMethod.GET });
-        consumer.apply(AuthorizeMiddleware, GetOrDeleteOrderMiddleware).forRoutes({ path: "/api/order/:id", method: RequestMethod.GET });
-        consumer.apply(AuthorizeMiddleware, CreateOrUpdateOrderMiddleware).forRoutes({ path: "/api/order/create", method: RequestMethod.POST });
+        consumer.apply(GetOrDeleteOrderMiddleware).forRoutes({ path: "/api/order/:id", method: RequestMethod.GET });
+        consumer.apply(CreateOrUpdateOrderMiddleware).forRoutes({ path: "/api/order/create", method: RequestMethod.POST });
     }
 }
