@@ -1,7 +1,7 @@
 import { logger } from "../../shared/logger";
 import { ICustomer } from "../models/entities/customer.model";
 import { ICreateOrUpdateCustomer, ICustomersResponse } from "../models/interfaces/requests/ICreateOrUpdateCustomer";
-const tag = "management:customer:customerMapper";
+const tag = "ecardshop-be:customer:customerMapper";
 export class CustomerMapper {
     public prepareTokenPayload(user: any): any {
         try {

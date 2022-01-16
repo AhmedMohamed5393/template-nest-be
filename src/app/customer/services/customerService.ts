@@ -4,7 +4,7 @@ import { ICustomer } from "../models/entities/customer.model";
 import { ICustomerService } from "../models/interfaces/classes/ICustomerService";
 import { ICreateOrUpdateCustomer } from "../models/interfaces/requests/ICreateOrUpdateCustomer";
 import { CustomerRepository } from "../repositories/customerRepository";
-const tag = "ecommerce-be:customer:customerService";
+const tag = "ecardshop-be:customer:customerService";
 @Injectable()
 export class CustomerService implements ICustomerService {
     private customerRepository: CustomerRepository;

@@ -3,7 +3,7 @@ import { IOrder } from "../models/entities/order.model";
 import { IOrderItem } from "../models/interfaces/IOrderItem";
 import { ICreateOrUpdateOrder } from "../models/interfaces/requests/ICreateOrUpdateOrder";
 import { IOrdersResponse } from "../models/interfaces/responses/IOrdersResponse";
-const tag = "ecommerce:order:orderMapper";
+const tag = "ecardshop-be:order:orderMapper";
 export class OrderMapper {
     public async mapOrdersResponse(orders: IOrder[]): Promise<IOrdersResponse[]> {
         try {

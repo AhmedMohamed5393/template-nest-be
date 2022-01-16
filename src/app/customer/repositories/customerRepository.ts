@@ -3,7 +3,7 @@ import { isValidObjectId } from "mongoose";
 import { ICustomerRepository } from "../models/interfaces/classes/ICustomerRepository";
 import { ICustomer } from "../models/entities/customer.model";
 import { ICreateOrUpdateCustomer } from "../models/interfaces/requests/ICreateOrUpdateCustomer";
-const tag = "ecommerce-be:customer:customerRepository";
+const tag = "ecardshop-be:customer:customerRepository";
 export class CustomerRepository implements ICustomerRepository {
     constructor(private customerModel) {}
     public async getCustomers(): Promise<ICustomer[]> {

@@ -12,7 +12,7 @@ import { ILoginRequest } from "./models/interfaces/requests/ILoginRequest";
 import { ApiBody, ApiCookieAuth, ApiInternalServerErrorResponse, ApiOkResponse, ApiParam, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { customerId, loginRequest } from "src/documentation";
 import { ICustomersResponse } from "./models/interfaces/requests/ICreateOrUpdateCustomer";
-const tag = "ecommerce-be:customer:service";
+const tag = "ecardshop-be:customer:service";
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;

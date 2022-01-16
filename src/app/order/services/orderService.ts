@@ -3,7 +3,7 @@ import { logger } from "../../shared/logger";
 import { IOrder } from "../models/entities/order.model";
 import { IOrderService } from "../models/interfaces/classes/IOrderService";
 import { OrderRepository } from "../repositories/orderRepository";
-const tag = "ecommerce-be:order:orderService";
+const tag = "ecardshop-be:order:orderService";
 @Injectable()
 export class OrderService implements IOrderService {
     private orderRepository: OrderRepository;

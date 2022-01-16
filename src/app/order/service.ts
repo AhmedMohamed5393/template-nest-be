@@ -14,7 +14,7 @@ import { ICreateOrUpdateOrder } from "./models/interfaces/requests/ICreateOrUpda
 import { ApiCookieAuth, ApiUnauthorizedResponse, ApiOkResponse, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiBody, ApiParam } from "@nestjs/swagger";
 import { orderExample, orderId } from "../../documentation";
 import { IOrdersResponse } from "./models/interfaces/responses/IOrdersResponse";
-const tag = "ecommerce-be:order:service";
+const tag = "ecardshop-be:order:service";
 @Controller("")
 export class Service implements IService {
     private customerService: CustomerService;
