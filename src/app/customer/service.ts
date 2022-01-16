@@ -37,8 +37,6 @@ export class Service implements IService {
             return res.status(500).json({ message: "Can't get all customers" });
         }
     }
-    @ApiCookieAuth('token')
-    @ApiUnauthorizedResponse({ status: 401, description: "Unauthorized" })
     @ApiParam({ type: "string", name: "id", example: customerId })
     @ApiOkResponse({ description: 'Get a specific customer' })
     @ApiInternalServerErrorResponse({ status: 500, description: "Can't get customer by id" })
