@@ -5,7 +5,7 @@ const tag = "ecardshop-be:authorizeMiddleware";
 export class AuthorizeMiddleware implements NestMiddleware {
     use(req: any, res: any, next: () => void) {
         try {
-            if (!req.cookies || !req.cookies.token) throw new UnauthorizedException("Unauthorized");
+            if ((!req.cookies || !req.cookies.token) && !req.headers.authorization) throw new UnauthorizedException("Unauthorized");
             next();
         } catch (error) {
             const middlewareErrorMessage = { tag, message: "Unauthorized", error, status: 401 };
