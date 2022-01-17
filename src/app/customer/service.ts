@@ -69,7 +69,7 @@ export class Service implements IService {
     private encodeToken(user: ILoginRequest): string {
         try {
             const payload = this.customerMapper.prepareTokenPayload(user);
-            return this.jwtService.sign(payload, { expiresIn: "7d" });
+            return this.jwtService.sign(payload, { expiresIn: "1h" });
         } catch (error) {
             const encodeTokenErrorMessage = { tag: tag + ":encodeToken", message: "There is an error while getting user token", error, status: 500 };
             logger(encodeTokenErrorMessage);
