@@ -1,5 +1,5 @@
 {
-  "name": "template-be",
+  "name": "template-nest-be",
   "version": "0.0.0",
   "description": "Template backend system using Node.js and Nest.js",
   "author": "Ahmed Mohamed",
@@ -87,10 +87,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AhmedMohamed5393/template-be.git"
+    "url": "git+https://github.com/AhmedMohamed5393/template-nest-be.git"
   },
   "bugs": {
-    "url": "https://github.com/AhmedMohamed5393/template-be/issues"
+    "url": "https://github.com/AhmedMohamed5393/template-nest-be/issues"
   },
-  "homepage": "https://github.com/AhmedMohamed5393/template-be#readme"
+  "homepage": "https://github.com/AhmedMohamed5393/template-nest-be#readme"
 }
