@@ -1,4 +1,4 @@
-# template-be
+# template-nest-be
 Template backend system using Node.js and Nest.js
 
 # note
