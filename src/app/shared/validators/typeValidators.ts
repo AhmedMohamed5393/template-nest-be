@@ -1,20 +1,7 @@
-import * as currencyCodes from "currency-codes";
 import { IInputObject } from "../interfaces/IInputObject";
 import { logger } from "../logger";
-const tag = "ecardshop-be:typeValidators";
+const tag = "template-be:typeValidators";
 export class TypeValidators {
-    public areCurrencyCodes(inputObjects: IInputObject[]): any {
-        try {
-            const errorMessages = [];
-            for (const inputObject of inputObjects) {
-                if (!inputObject.value || !currencyCodes.code(inputObject.value)) errorMessages.push(`${inputObject.key} is not a currency code`);
-            }
-            return !errorMessages.length ? true : { errorMessages };
-        } catch (error) {
-            const areCurrencyCodesErrorMessage = { tag: tag + ":areCurrencyCodes", message: "internal server error", error, status: 500 };
-            logger(areCurrencyCodesErrorMessage);
-        }
-    }
     public arePhones(inputObjects: IInputObject[]): any {
         try {
             const regexWithoutPlus = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;

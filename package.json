@@ -1,7 +1,7 @@
 {
-  "name": "ecardshop-be",
-  "version": "0.0.1",
-  "description": "Backend System with Node.js and Nest.js for E-Commerce service",
+  "name": "template-be",
+  "version": "0.0.0",
+  "description": "Template backend system using Node.js and Nest.js",
   "author": "Ahmed Mohamed",
   "private": true,
   "license": "UNLICENSED",
@@ -87,10 +87,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AhmedMohamed5393/management-be.git"
+    "url": "git+https://github.com/AhmedMohamed5393/template-be.git"
   },
   "bugs": {
-    "url": "https://github.com/AhmedMohamed5393/management-be/issues"
+    "url": "https://github.com/AhmedMohamed5393/template-be/issues"
   },
-  "homepage": "https://github.com/AhmedMohamed5393/management-be#readme"
+  "homepage": "https://github.com/AhmedMohamed5393/template-be#readme"
 }

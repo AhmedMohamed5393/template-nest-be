@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
 import { logger } from "../logger";
-const tag = "ecardshop-be:authorizeMiddleware";
+const tag = "template-be:authorizeMiddleware";
 @Injectable()
 export class AuthorizeMiddleware implements NestMiddleware {
     use(req: any, res: any, next: () => void) {
